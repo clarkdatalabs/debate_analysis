@@ -11,7 +11,7 @@ ix = open_dir("index")
 
 searcher = ix.searcher()
 
-phrase_to_search = unicode("*")
+phrase_to_search = unicode("wife")
 
 parser = QueryParser("sentence", schema=ix.schema)
 
@@ -27,6 +27,9 @@ results = searcher.search(q, limit=None)
 # lines_list=[]
 for result in results:
     # print result['person'] + '  ' + result['debate_no'] + '  ' + result['sentence']
+
+    cand = []
+
     person = result['person']
     debate = result['debate_no']
     sentence = result['sentence']
@@ -84,11 +87,11 @@ for result in results:
 
             if clean_sentiment.startswith('neu'):
                 neu_score = str(ss[k])
-                neu_score = float(neu_score)
+                neutral_score = float(neu_score)
 
             if clean_sentiment.startswith('neg'):
                 neg_score = str(ss[k])
-                neg_score = float(neg_score)
+                negative_score = float(neg_score)
 
         rep_canidates = ['CRUZ', 'RUBIO', 'KASICH', 'CARSON', 'FIORINA', 'PAUL', 'HUCKABEE', 'WALKER','TRUMP', 'CHRISTIE', 'BUSH']
         dem_candidates = ['CLINTON', 'SANDERS', 'CHAFEE', "O'MALLEY", 'WEBB']
@@ -111,55 +114,56 @@ for result in results:
         omalley = dem_candidates[3]
         webb = dem_candidates[4]
 
-        avg = 0
-        sum = 0
 
         if person == cruz:
-            cruz_info = str(person + "  " + debate + "  " + sentence + "  " + "compound: " + str(c_score) + "  " + "positive: " + str(p_score) + "  " + "neutral: " + str(neu_score) + "  " + "negative: " + str(neg_score) )
+            cruz_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " +  compound_score
 
         if person == rubio:
-            rubio_info = str(person + "  " + debate + "  " + sentence + "  " + "compound: " + str(c_score) + "  " + "positive: " + str(p_score) + "  " + "neutral: " + str(neu_score) + "  " + "negative: " + str(neg_score) )
+            rubio_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
 
         if person == kasich:
-            kasich_info = str(person + "  " + debate + "  " + sentence + "  " + "compound: " + str(c_score) + "  " + "positive: " + str(p_score) + "  " + "neutral: " + str(neu_score) + "  " + "negative: " + str(neg_score) )
+            kasich_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
 
         if person == carson:
-            carson_info = str(person + "  " + debate + "  " + sentence + "  " + "compound: " + str(c_score) + "  " + "positive: " + str(p_score) + "  " + "neutral: " + str(neu_score) + "  " + "negative: " + str(neg_score) )
+            carson_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
 
         if person == fiorina:
-            fiorina_info = str(person + "  " + debate + "  " + sentence + "  " + "compound: " + str(c_score) + "  " + "positive: " + str(p_score) + "  " + "neutral: " + str(neu_score) + "  " + "negative: " + str(neg_score) )
+            fiorina_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
 
         if person == paul:
-            paul_info = str(person + "  " + debate + "  " + sentence + "  " + "compound: " + str(c_score) + "  " + "positive: " + str(p_score) + "  " + "neutral: " + str(neu_score) + "  " + "negative: " + str(neg_score) )
+            paul_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
 
         if person == huckabee:
-            huckabee_info = str(person + "  " + debate + "  " + sentence + "  " + "compound: " + str(c_score) + "  " + "positive: " + str(p_score) + "  " + "neutral: " + str(neu_score) + "  " + "negative: " + str(neg_score) )
+            huckabee_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
 
         if person == walker:
-            walker_info = str(person + "  " + debate + "  " + sentence + "  " + "compound: " + str(c_score) + "  " + "positive: " + str(p_score) + "  " + "neutral: " + str(neu_score) + "  " + "negative: " + str(neg_score) )
+            walker_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
+
+        if person == christie:
+            christie_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
+
+        if person == bush:
+            bush_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
+            # print bush_info
 
         if person == trump:
-            trump_info = str(person + "  " + debate + "  " + sentence + "  " + "compound: " + str(c_score) + "  " + "positive: " + str(p_score) + "  " + "neutral: " + str(neu_score) + "  " + "negative: " + str(neg_score) )
-            trump_scores = compound_score
+            bush_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
+
 
         # if debatenumber not in dummydictionary[person]:
         #     dummydictionary[person][debatenumber]=
 
+    
 
 
-        if person == christie:
-            christie_info = str(person + "  " + debate + "  " + sentence + "  " + "compound: " + str(c_score) + "  " + "positive: " + str(p_score) + "  " + "neutral: " + str(neu_score) + "  " + "negative: " + str(neg_score) )
 
-        if person == bush:
-            bush_info = str(person + "  " + debate + "  " + sentence + "  " + "compound: " + str(c_score) + "  " + "positive: " + str(p_score) + "  " + "neutral: " + str(neu_score) + "  " + "negative: " + str(neg_score) )
-            # print bush_info
 
-    # print(person + "  " + debate + "  " + sentence + "  " + "compound: " + str(c_score) + "  " + "positive: " + str(p_score) + "  " + "neutral: " + str(neu_score) + "  " + "negative: " + str(neg_score) )
+    print person + "  " + debate + "  " + sentence + "  " + "compound: " + compound_score
 
 
 # next steps are to return individual csvs for each query=>
-# total number of times     #total positive sentiment/person       #total neg sentiment/person
-# Make a dictionary with columns like 'candidate', 'debate no', 'category', 'count'
+
+# Make a dictionary with columns like 'candidate', 'debate no', 'category of sentiment', 'count'
 # The categories:
 #   negative= -1 to -0.5
 #   slightly negative = -0.5 to -0.1
