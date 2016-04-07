@@ -1,173 +1,84 @@
 __author__ = 'kristensheppard'
+# -*- coding: utf-8 -*-
 
+import json
 from whoosh.index import open_dir
 from whoosh.qparser import QueryParser
-
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
-from nltk import tokenize
 
 # Opening the index inside of the directory back up coming from sentiment_3
 ix = open_dir("index")
 
 searcher = ix.searcher()
 
-phrase_to_search = unicode("wife")
+phrase_to_search = unicode("Putin")
 
 parser = QueryParser("sentence", schema=ix.schema)
 
 q = parser.parse(phrase_to_search)
 
-
-# this result prints okay
 results = searcher.search(q, limit=None)
 
-# print type(results) -- this is a class
-
-# Go through results and print the context
-# lines_list=[]
+# create list of dictionaries
+lst = []
 for result in results:
-    # print result['person'] + '  ' + result['debate_no'] + '  ' + result['sentence']
+    dct = {}
+    dct2 = {}
+    dct["candidate"] = result['person']
+    dct["debate"] = result['debate_no']
+    dct["sentences"] = dct2
+    dct2["text"] = result['sentence'].encode('utf8').decode('ascii','ignore')
+    dct2["category"]= result['category']
+    dct["join"] = result["person"]+result["debate_no"]
+    lst.append(dct)
 
-    cand = []
+# create dictionary where 'join' (e.g., FIORINA02) is key
+# each value is a list of sentiment categories for that candidate in that debate
+to_be_counted = {}
+for i in lst:
+    to_be_counted[i["join"]] = []
+for i in lst:
+    if i["join"] in to_be_counted:
+        to_be_counted[i["join"]].append(i["sentences"]["category"])
 
-    person = result['person']
-    debate = result['debate_no']
-    sentence = result['sentence']
-    lines_list = tokenize.sent_tokenize(sentence)
-    sentences = lines_list
-    sid = SentimentIntensityAnalyzer()
-    for sentence in sentences:
-        # print(sentence)
+# create new dictionary where occurrences of categories in each list have been counted
+counts = {}
+for i in to_be_counted:
+    l = to_be_counted[i]
+    counts_grp = [[x,l.count(x)] for x in set(l)]
+    counts[i] = dict(counts_grp)
 
-        # Below here is calculating sentiment and making the integer scores separately
-        ss = sid.polarity_scores(sentence)
-        for k in sorted(ss):
-            sentiment =str('{0}: {1}, '.format(k, ss[k]))
-            # print(person + "  " + debate + "  " + sentiment)
-            sentiment_split = [sentiment.strip() for x in sentiment.split(",")]
-            clean = sentiment_split[1].split(",")
-            clean_sentiment= clean[0]
-            # print clean_sentiment
+# insert counts with values in master list of dictionaries
+for i in lst:
+    key = i["join"]
+    if key in counts:
+        i["counts"] = counts[key]
 
-            if clean_sentiment.startswith('c'):
-                compound_score = str(ss[k])
-                c_score = float(compound_score)
-                count = 0
+# StackOverflow Solution
+# source thread : 'Dictionaries inside a List :: Merging Values for the Same Keys'
+databykey = {}   # make a new dictionary
+for i in lst:    # for each item in the list
+    if i["join"] in databykey:
+        databykey[i["join"]]["sentences"].append(i["sentences"])
+    else:
+        databykey[i["join"]]={"candidate": i["candidate"],
+                              "debate" : i["debate"],
+                              "counts": i["counts"],
+                              "sentences": [i["sentences"]]}
+# if the item's 'join' key value is already in the dictionary, add its values to the list
+# else, add the 'join' key value to the dictionary with the candidate, debate, counts, and the first value
 
-                positive_scores = []
-                slightly_positive_scores = []
-                neutral = []
-                slightly_negative = []
-                negative_scores = []
+master = []
+for i in databykey:
+    master.append(databykey[i])
+for i in master:
+    print i
 
-                if c_score > 0.5:
-                    positive_scores.append(c_score)
-                    # print positive_scores
-
-                if c_score< 0.5 and c_score > 0.1:
-                    slightly_positive_scores.append(c_score)
-                    # print slightly_positive_scores
-
-                if c_score > -0.1 and c_score < 0.1:
-                    neutral.append(c_score)
-                    # print neutral
-
-                if c_score > -0.5 and c_score < -0.1:
-                    slightly_negative.append(c_score)
-                    # print slightly_negative
-
-                if c_score < -0.5:
-                    negative_scores.append(c_score)
-                    # print negative_scores
-
-            if clean_sentiment.startswith('p'):
-                pos_score = str(ss[k])
-                p_score = float(pos_score)
-
-
-            if clean_sentiment.startswith('neu'):
-                neu_score = str(ss[k])
-                neutral_score = float(neu_score)
-
-            if clean_sentiment.startswith('neg'):
-                neg_score = str(ss[k])
-                negative_score = float(neg_score)
-
-        rep_canidates = ['CRUZ', 'RUBIO', 'KASICH', 'CARSON', 'FIORINA', 'PAUL', 'HUCKABEE', 'WALKER','TRUMP', 'CHRISTIE', 'BUSH']
-        dem_candidates = ['CLINTON', 'SANDERS', 'CHAFEE', "O'MALLEY", 'WEBB']
-
-        cruz = rep_canidates[0]
-        rubio = rep_canidates[1]
-        kasich = rep_canidates[2]
-        carson = rep_canidates[3]
-        fiorina = rep_canidates[4]
-        paul = rep_canidates[5]
-        huckabee = rep_canidates[6]
-        walker = rep_canidates[7]
-        trump = rep_canidates[8]
-        christie = rep_canidates[9]
-        bush = rep_canidates[10]
-
-        clinton = dem_candidates[0]
-        sanders = dem_candidates[1]
-        chafee =  dem_candidates[2]
-        omalley = dem_candidates[3]
-        webb = dem_candidates[4]
-
-
-        if person == cruz:
-            cruz_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " +  compound_score
-
-        if person == rubio:
-            rubio_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
-
-        if person == kasich:
-            kasich_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
-
-        if person == carson:
-            carson_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
-
-        if person == fiorina:
-            fiorina_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
-
-        if person == paul:
-            paul_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
-
-        if person == huckabee:
-            huckabee_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
-
-        if person == walker:
-            walker_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
-
-        if person == christie:
-            christie_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
-
-        if person == bush:
-            bush_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
-            # print bush_info
-
-        if person == trump:
-            bush_info = person + "  " + debate + "  " + sentence.encode('utf8').decode('ascii', 'ignore') + "  " + "compound: " + compound_score
-
-
-        # if debatenumber not in dummydictionary[person]:
-        #     dummydictionary[person][debatenumber]=
-
-    
-
-
-
-
-    print person + "  " + debate + "  " + sentence + "  " + "compound: " + compound_score
-
-
-# next steps are to return individual csvs for each query=>
-
-# Make a dictionary with columns like 'candidate', 'debate no', 'category of sentiment', 'count'
-# The categories:
-#   negative= -1 to -0.5
-#   slightly negative = -0.5 to -0.1
-#   neutral = -0.1 to 0.1
-#   slight positive = 0.1 to 0.5
-#   positive = 0.5 to 1
-#   we need the count by category and not the averages.. get the count for each of the ones above
+jstr = {}
+jstr['debate_data'] = master
+# print type(jstr)
+json_object = json.dumps(jstr)
+# print type(json_object)
+print json_object
+# d = json.loads(json_object)
+# print type(d)
+# print d

@@ -5,6 +5,9 @@ import csv
 import urllib2
 from nltk.parse import stanford
 
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk import tokenize
+
 # get master of all data from debates from GitHub
 url = "https://raw.githubusercontent.com/gtadiparthi/debate-parser/master/all_debates.csv"
 webpage = urllib2.urlopen(url)
@@ -27,6 +30,7 @@ schema = Schema(person=ID(stored=True),
                 debate_no=TEXT(stored=True),
                 sentiment_score=NUMERIC(stored=True, sortable=True),
                 tags=KEYWORD(stored=True),
+                category=TEXT(stored=True),
                 sentence=TEXT(spelling=True, analyzer=StemmingAnalyzer(), stored=True))
 
 FIELD_KEYWORDS = 'keywords'
@@ -35,8 +39,6 @@ FIELD_CONTENT = 'sentences'
 if not os.path.exists("index"):
     os.mkdir("index")
 ix = create_in("index", schema)
-
-
 
 # create list of lists
 data = []
@@ -67,8 +69,8 @@ for row in transcript:
         row['text'] = str(text)
         #print row
 
-#for row in transcript:
-    #print row
+# for row in transcript:
+#     print row
 
 # encode sentences as unicode
 for row in transcript:
@@ -94,10 +96,23 @@ for row in transcript_no_moderators:
     testbatch.append(row)
 
 writer = ix.writer()
+sid = SentimentIntensityAnalyzer()
 for row in testbatch:
-    writer.add_document(person=row['speaker'], debate_no =row['debateNo'], sentence=row['text'])
+    ss = sid.polarity_scores(row['text'])
+    c_score = ss['compound']
+    cat = ' '.decode('utf-8')
+    if c_score > 0.5:
+        cat = 'positive'.decode('utf-8')
+    if c_score < 0.5 and c_score > 0.1:
+        cat  = 'somewhat positive'.decode('utf-8')
+    if c_score > -0.1 and c_score < 0.1:
+        cat = 'neutral'.decode('utf-8')
+    if c_score > -0.5 and c_score < -0.1:
+        cat  = 'somewhat negative'.decode('utf-8')
+    if c_score < -0.5:
+        cat  = 'negative'.decode('utf-8')
+    writer.add_document(person=row['speaker'], debate_no =row['debateNo'], sentence=row['text'], sentiment_score =c_score, category=cat)
 writer.commit()
-
 
 
 # Here down is that program you run for the actual search. Above should only load once
@@ -113,13 +128,11 @@ q = parser.parse(phrase_to_search)
 # this result prints okay
 results = searcher.search(q, limit=None)
 
-
-
 # print type(results) -- this is a class
 # trying to go through results and print the context (i.e. speaker and sentence)
 for result in results:
-
-    print result['person'] + '  ' + result['debate_no'] + '  ' + result['sentence']
+    # print result['person'] + '  ' + result['debate_no'] + ' ' + str(result['sentiment_score'])+  '  ' + result['category'] + '  ' + result['sentence']
+    print str(result['sentiment_score'])
 
 # Was this results object created with terms=True?
 # if results.has_matched_terms():
