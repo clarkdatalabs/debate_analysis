@@ -15,8 +15,15 @@ phrase_to_search = unicode("Putin")
 parser = QueryParser("sentence", schema=ix.schema)
 
 q = parser.parse(phrase_to_search)
+# nq = str(q)
+# print nq
+# token1 = str((nq)).split(':')
+# print token1
 
 results = searcher.search(q, limit=None)
+
+rep_speakers = ['CRUZ', 'RUBIO', 'KASICH', 'CARSON', 'FIORINA', 'PAUL', 'HUCKABEE', 'WALKER','TRUMP', 'CHRISTIE', 'BUSH']
+dem_speakers = ['CLINTON', 'SANDERS', 'CHAFEE', "O'MALLEY", 'WEBB']
 
 # create list of dictionaries
 lst = []
@@ -24,7 +31,10 @@ for result in results:
     dct = {}
     dct2 = {}
     dct["candidate"] = result['person']
-    dct["debate"] = result['debate_no']
+    if dct["candidate"] in rep_speakers:
+        dct["debate"] = 'R' + result['debate_no']
+    else:
+        dct["debate"] = 'D'+ result['debate_no']
     dct["sentences"] = dct2
     dct2["text"] = result['sentence'].encode('utf8').decode('ascii','ignore')
     dct2["category"]= result['category']
@@ -73,11 +83,34 @@ for i in databykey:
 for i in master:
     print i
 
+# word counts:
+# for i in master:
+#     sentences = i['sentences']
+#     for i in sentences:
+#         count = 0
+#         text = i['text'].split()
+#         for word in text:
+#             if word == phrase_to_search:
+#                 count +=1
+#         i['word_count'] = count
+#
+#
+# for i in master:
+#     lst = []
+#     sentences = i['sentences']
+#     lst = []
+#     for sentence in sentences:
+#         lst.append(sentence['word_count'])
+#     print lst
+#     i['counts']['total_word_appearances'] = sum(lst)
+#     print i['counts']['total_word_appearances']
+
+
 jstr = {}
 jstr['debate_data'] = master
-# print type(jstr)
+print type(jstr)
 json_object = json.dumps(jstr)
-# print type(json_object)
+print type(json_object)
 print json_object
 # d = json.loads(json_object)
 # print type(d)
