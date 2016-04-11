@@ -83,29 +83,6 @@ for i in databykey:
 for i in master:
     print i
 
-# word counts:
-# for i in master:
-#     sentences = i['sentences']
-#     for i in sentences:
-#         count = 0
-#         text = i['text'].split()
-#         for word in text:
-#             if word == phrase_to_search:
-#                 count +=1
-#         i['word_count'] = count
-#
-#
-# for i in master:
-#     lst = []
-#     sentences = i['sentences']
-#     lst = []
-#     for sentence in sentences:
-#         lst.append(sentence['word_count'])
-#     print lst
-#     i['counts']['total_word_appearances'] = sum(lst)
-#     print i['counts']['total_word_appearances']
-
-
 jstr = {}
 jstr['debate_data'] = master
 print type(jstr)
