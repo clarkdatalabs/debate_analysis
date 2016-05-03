@@ -9,28 +9,64 @@
 <body>
 	<!-- Haven't gotten results.json to load yet on this page -->
 	<script>
-		d3.json("results.json", function(data) {
-			var canvas = d3.select("body").append("svg")
-			.attr("width", 500)
-			.attr("height", 500)
+var data_hold;
 
-			canvas.selectAll("rect")
-				.data(data)
-				.enter()
-					.append("rect")
-					.attr("width", function (d) { return d.debate_data.counts.positive * 10; })
-					.attr("height", 48)
-					.attr("y", function (d, i) {return i *50;} )
-					.attr("fill", "blue")
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
-			canvas.selectAll("text")
-				.data(data)
-				.enter()
-					.append("text")
-					.attr("fill", "white")
-					.attr("y", function (d, i) {return i *50+24;} )
-					.text(function (d) { return d.candidate; })
-		} )
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .1);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(10, "%");
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.json("debate_result1.json", function(error, data) {
+	if (error) throw error;
+
+	data_hold = data;
+  x.domain(data.debate_data.map(function(d) { return d.debate + d.candidate; }));
+  y.domain([0, d3.max(data.debate_data, function(d) { return d.counts.negative; })]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Frequency");
+
+  svg.selectAll(".bar")
+      .data(data.debate_data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.debate + d.candidate); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.counts.negative); })
+      .attr("height", function(d) { return height - y(d.counts.negative); });
+} );
 	</script>
 </body>
 {% endautoescape %}
