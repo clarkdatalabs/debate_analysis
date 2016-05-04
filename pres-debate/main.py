@@ -35,11 +35,11 @@
 # following instructions on this github: https://github.com/tallstreet/Whoosh-AppEngine
 # some articles say to download Whoosh App engine but I can't find where to download it
 
-# Next work around idea is to create a libs part of the app. 
-# This directory should contain all the external python packages 
-# you want to bundle in your app. For ex. in this sample, 
+# Next work around idea is to create a libs part of the app.
+# This directory should contain all the external python packages
+# you want to bundle in your app. For ex. in this sample,
 # I have bundled mako templating framework
-# So I think that I have to take all of the source packages from Whoosh and stick 
+# So I think that I have to take all of the source packages from Whoosh and stick
 # them into this lib area
 # Then create a fix_path.py file to import os, sys, and all of the libraries
 # import fix_path in the main.py file
@@ -74,7 +74,7 @@ JINJA_ENVIRONMENT=jinja2.Environment(
 class MainHandler(webapp2.RequestHandler):
     def get(self):
     	user = "Kristen"
-        
+
         template_values = {
             'user': user,
         }
@@ -95,10 +95,10 @@ class ResultsHandler(webapp2.RequestHandler):
 
     def get(self):
         search_query = self.request.get('query', DEFAULT_QUERY)
-        # results = Search.results.fetch(10) 
+        # results = Search.results.fetch(10)
         # I think the line above is how you get the amount of search results
 
-        
+
 
     def post(self):
         query = self.request.get('search_query')
@@ -111,11 +111,11 @@ class ResultsHandler(webapp2.RequestHandler):
             'query': query,
             'results': results,
         }
-        template = JINJA_ENVIRONMENT.get_template('templates/results.html')
+        template = JINJA_ENVIRONMENT.get_template('templates/results.json')
         self.response.write(template.render(template_values))
 
 
-    	
+
 
 
 app = webapp2.WSGIApplication([
