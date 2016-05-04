@@ -10,6 +10,13 @@
 	<!-- Haven't gotten results.json to load yet on this page -->
 	<script>
 var data_hold;
+var layers;
+var stack = d3.layout.stack();
+
+var nest = d3.nest()
+	.key(function(d) {return d3.keys(d.counts); })
+	.key(function(d) {return d.debate});
+
 
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
@@ -39,9 +46,13 @@ var svg = d3.select("body").append("svg")
 d3.json("debate_result1.json", function(error, data) {
 	if (error) throw error;
 
-	data_hold = data;
-  x.domain(data.debate_data.map(function(d) { return d.debate + d.candidate; }));
-  y.domain([0, d3.max(data.debate_data, function(d) { return d.counts.negative; })]);
+	var bush = data.debate_data.filter(function(d) {return d.candidate=="BUSH"});
+  x.domain(bush.map(function(d) { return d.debate; }));
+  y.domain([0, d3.max(bush, function(d) { return d.counts.negative; })]);
+
+
+	data_hold = bush;
+	//layers = stack(nest.entries(bush));
 
   svg.append("g")
       .attr("class", "x axis")
@@ -59,10 +70,10 @@ d3.json("debate_result1.json", function(error, data) {
       .text("Frequency");
 
   svg.selectAll(".bar")
-      .data(data.debate_data)
+      .data(bush)
     .enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function(d) { return x(d.debate + d.candidate); })
+      .attr("x", function(d) { return x(d.debate); })
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.counts.negative); })
       .attr("height", function(d) { return height - y(d.counts.negative); });
