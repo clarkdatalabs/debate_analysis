@@ -8,4 +8,4 @@
 ```javascript
 appcfg.py -A <YOUR_PROJECT_ID_> -V v1 update pres-debate/
 ```
-4.The app should be deployed and browse at [http://<YOUR_PROJECT_ID_>.appspot.com/]
+4.The app should be deployed and browse at http://<YOUR_PROJECT_ID_>.appspot.com/
