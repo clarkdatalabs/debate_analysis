@@ -11,20 +11,24 @@
 	<script>
 var data_hold = [];
 var layers;
-var stack = d3.layout.stack().offset('wiggle')
+var stack = d3.layout.stack().offset("silhouette")
 		.values(function(d) { return d.values; })
-		.x(function(d) { return d.debate;})
-		.y(function(d) { return d.count; });
+		.x(function(d) { return +d.debate;})
+		.y(function(d) { return d.count;});
 
 var nest = d3.nest()
 	.key(function (d) {return d.sentiment})
+
+var color = d3.scale.ordinal()
+	.domain(["negative","neutral","positive"])
+	.range(["#d62728","#ffbb78","#2ca02c"]);
 
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-var x = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .1);
+var x = d3.scale.linear()
+    .range([0, width]);
 
 var y = d3.scale.linear()
     .range([height, 0]);
@@ -39,7 +43,8 @@ var yAxis = d3.svg.axis()
     .ticks(10);
 
 var area = d3.svg.area()
-    .x(function(d) { return x(d.x); })
+		.interpolate("cardinal")
+    .x(function(d) { return x(+d.debate); })
     .y0(function(d) { return y(d.y0); })
     .y1(function(d) { return y(d.y0 + d.y); });
 
@@ -49,15 +54,15 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("modified2.json", function(error, data) {
+d3.json("test.json", function(error, data) {
 	if (error) throw error;
 
 	var bush = data.debate_data.filter(function(d) {return d.candidate=="BUSH"});
-  x.domain(bush.map(function(d) { return d.debate; }));
-  y.domain([0, d3.max(bush, function(d) { return d.count; })]);
+  x.domain([1,d3.max(bush, function(d) { return +d.debate; })]);
+  y.domain([0, 15]);
 
 
-	data_hold = nest.entries(bush);
+	data_hold = stack(nest.entries(bush));
 
   svg.append("g")
       .attr("class", "x axis")
@@ -74,6 +79,13 @@ d3.json("modified2.json", function(error, data) {
       .style("text-anchor", "end")
       .text("Frequency");
 
+	svg.selectAll(".layer")
+			.data(data_hold)
+		.enter().append("path")
+			.attr("d", function(d) {return area(d.values)})
+			.attr("fill", function(d) {return color(d.key)})
+			.attr("class", function(d) {console.log(d.key);return d.key;});
+/*
   svg.selectAll(".bar")
       .data(bush)
     .enter().append("rect")
@@ -82,6 +94,8 @@ d3.json("modified2.json", function(error, data) {
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.count); })
       .attr("height", function(d) { return height - y(d.count); });
+
+*/
 } );
 	</script>
 </body>
