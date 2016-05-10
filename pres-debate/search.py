@@ -102,7 +102,7 @@ def function(query):
                 final['sentences'] = []
                 for text in i['sentences']:
                     if final['candidate'] == i['candidate'] and final['debate'] == i['debate'] and final['sentiment'] == text['category']:
-                    forinal['sentences'].append(text['text'])
+                        final['sentences'].append(text['text'])
             final_lst.append(final)
 
     jstr = {}
