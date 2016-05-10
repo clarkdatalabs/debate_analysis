@@ -1,4 +1,4 @@
-__author__ = 'dainaandries'
+__author__ = 'kristensheppard'
 # -*- coding: utf-8 -*-
 
 import json
@@ -83,14 +83,14 @@ for result in results:
         sn_count += 1
     if result['category'] == 'negative':
         negative_count += 1
-# print '"Positive" count equals' + ' ' + str(pos_count)
-# print '"Somewhat positive" count equals' + ' ' + str(sp_count)
-# print '"Neutral" count equals' + ' ' + str(neutral_count)
-# print '"Somewhat negative" count equals' + ' ' + str(sn_count)
-# print '"Negative" count equals' + ' ' + str(negative_count)
-# total = pos_count + sp_count + neutral_count + sn_count + negative_count
-# print total
-# print len(results)
+print '"Positive" count equals' + ' ' + str(pos_count)
+print '"Somewhat positive" count equals' + ' ' + str(sp_count)
+print '"Neutral" count equals' + ' ' + str(neutral_count)
+print '"Somewhat negative" count equals' + ' ' + str(sn_count)
+print '"Negative" count equals' + ' ' + str(negative_count)
+total = pos_count + sp_count + neutral_count + sn_count + negative_count
+print total
+print len(results)
 
 # create list of dictionaries
 lst = []
@@ -148,46 +148,6 @@ master = []
 for i in databykey:
     master.append(databykey[i])
 
-# final_lst = []
-# for i in master:
-#     final = {}
-#     final2 = {}
-#     final['candidate'] = i['candidate']
-#     for c in i['counts']:
-#         #print c , i['counts'][c]
-#         final[c] = {}
-#         final[c]['debate'] = i['debate']
-#         for key in final:
-#             if key in i['counts']:
-#                 final[c]['count'] = i['counts'][key]
-#                 final[c]['sentences'] = []
-#
-#     final_lst.append(final)
-
-final_lst = []
-for i in master:
-    for category in i['counts']:
-        #print category , i['counts'][category]
-        final = {}
-        final['candidate'] = i['candidate']
-        final['sentiment'] = category
-        final['debate'] = i['debate']
-        if final['sentiment'] in i['counts']:
-            final['count'] = i['counts'][final['sentiment']]
-            final['sentences'] = []
-            for text in i['sentences']:
-                if final['candidate'] == i['candidate'] and final['debate'] == i['debate'] and final['sentiment'] == text['category']:
-                    final['sentences'].append(text['text'])
-        final_lst.append(final)
-
-for i in final_lst:
-    print i
-
-
-
-
-
-
 # word counts:
 # inaccurate because of punctuation and stemming
 # example 'Putin.' will not be counted
@@ -232,7 +192,7 @@ for i in final_lst:
 
 
 jstr = {}
-jstr['debate_data'] = final_lst
+jstr['debate_data'] = master
 #print type(jstr)
 json_object = json.dumps(jstr)
 #print type(json_object)
