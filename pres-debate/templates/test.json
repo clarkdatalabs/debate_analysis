@@ -1,4 +1,5 @@
-{"debate_data": [{"count": 2, "sentences": [], "sentiment": "negative", "candidate": "BUSH", "debate": "4"},
+{"debate_data": [{"count": 2, "sentences": [], "sentiment": "negative", "candidate": "BUSH", "debate": "3"},
+{"count": 2, "sentences": [], "sentiment": "negative", "candidate": "BUSH", "debate": "4"},
 {"count": 1, "sentences": [], "sentiment": "neutral", "candidate": "BUSH", "debate": "4"},
 {"count": 2, "sentences": [], "sentiment": "positive", "candidate": "BUSH", "debate": "4"},
 {"count": 3, "sentences": [], "sentiment": "neutral", "candidate": "BUSH", "debate": "5"},

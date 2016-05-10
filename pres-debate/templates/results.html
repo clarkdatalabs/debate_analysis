@@ -10,8 +10,10 @@
 	<!-- Haven't gotten results.json to load yet on this page -->
 	<script>
 var data_hold = [];
+var debates = ["1","2","3","4","5","6","7","8","9","10","11","12"];
+var candidates = ["BUSH","RUBIO","SANDERS"]
 var layers;
-var stack = d3.layout.stack().offset("silhouette")
+var stack = d3.layout.stack().offset("wiggle")
 		.values(function(d) { return d.values; })
 		.x(function(d) { return +d.debate;})
 		.y(function(d) { return d.count;});
@@ -20,8 +22,8 @@ var nest = d3.nest()
 	.key(function (d) {return d.sentiment})
 
 var color = d3.scale.ordinal()
-	.domain(["negative","neutral","positive"])
-	.range(["#d62728","#ffbb78","#2ca02c"]);
+	.domain(["negative","somewhat negative","neutral","somewhat positive","positive"])
+	.range(["#d62728","#ff9896","#ffbb78","#98df8a","#2ca02c"]);
 
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
@@ -54,15 +56,26 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("test.json", function(error, data) {
+d3.json("modified2.json", function(error, data) {
 	if (error) throw error;
 
-	var bush = data.debate_data.filter(function(d) {return d.candidate=="BUSH"});
-  x.domain([1,d3.max(bush, function(d) { return +d.debate; })]);
+	var bush = data.debate_data.filter(function(d) {return d.candidate=="SANDERS"});
+  x.domain([1,d3.max(debates, function(d) { return +d; })]);
   y.domain([0, 15]);
 
 
-	data_hold = stack(nest.entries(bush));
+	data_hold = nest.entries(bush);
+
+	data_hold.forEach(function (d){
+		debates.forEach(function (f){
+			if (!d.values.some(function (g){
+				return g.debate === f;
+			})){
+				d.values.push({"debate":f,"count":0});
+			}
+		})
+		d.values.sort(function(a,b){return +a.debate - +b.debate;});
+	});
 
   svg.append("g")
       .attr("class", "x axis")
@@ -80,7 +93,7 @@ d3.json("test.json", function(error, data) {
       .text("Frequency");
 
 	svg.selectAll(".layer")
-			.data(data_hold)
+			.data(stack(data_hold))
 		.enter().append("path")
 			.attr("d", function(d) {return area(d.values)})
 			.attr("fill", function(d) {return color(d.key)})
