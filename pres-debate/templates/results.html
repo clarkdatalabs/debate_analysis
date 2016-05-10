@@ -11,9 +11,9 @@
 	<script>
 var data_hold = [];
 var debates = ["1","2","3","4","5","6","7","8","9","10","11","12"];
-var candidates = ["BUSH","RUBIO","SANDERS"]
+var candidates = ["BUSH","RUBIO","SANDERS"];
 var layers;
-var stack = d3.layout.stack().offset("wiggle")
+var stack = d3.layout.stack().offset("silhouette")
 		.values(function(d) { return d.values; })
 		.x(function(d) { return +d.debate;})
 		.y(function(d) { return d.count;});
@@ -45,7 +45,7 @@ var yAxis = d3.svg.axis()
     .ticks(10);
 
 var area = d3.svg.area()
-		.interpolate("cardinal")
+		.interpolate("monotone")
     .x(function(d) { return x(+d.debate); })
     .y0(function(d) { return y(d.y0); })
     .y1(function(d) { return y(d.y0 + d.y); });
@@ -56,10 +56,10 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("modified2.json", function(error, data) {
+d3.json("modified2_wSentences.json", function(error, data) {
 	if (error) throw error;
 
-	var bush = data.debate_data.filter(function(d) {return d.candidate=="SANDERS"});
+	var bush = data.debate_data.filter(function(d) {return d.candidate=="RUBIO"});
   x.domain([1,d3.max(debates, function(d) { return +d; })]);
   y.domain([0, 15]);
 
