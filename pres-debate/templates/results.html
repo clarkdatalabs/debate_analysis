@@ -1,17 +1,22 @@
 <!DOCTYPE html>
-{% autoescape true %}
 <head>
 <title>D3 Output</title>
 <script src="https://d3js.org/d3.v3.min.js" charset="utf-8">
 </script>
+<style>
+.axis path{
+	fill: none;
+	stroke: #000000;
+	stroke-width:1px;
+}
+</style>
 </head>
 
 <body>
-	<!-- Haven't gotten results.json to load yet on this page -->
 	<script>
 var data_hold = [];
 var debates = ["1","2","3","4","5","6","7","8","9","10","11","12"];
-var candidates = ["BUSH","RUBIO","SANDERS"];
+var candidates = ['TRUMP','CRUZ','KASICH','RUBIO','CARSON', 'FIORINA', 'PAUL', 'HUCKABEE', 'WALKER','CHRISTIE', 'BUSH', 'CLINTON', 'SANDERS', 'CHAFEE', "O'MALLEY", 'WEBB'];
 var layers;
 var stack = d3.layout.stack().offset("silhouette")
 		.values(function(d) { return d.values; })
@@ -25,9 +30,9 @@ var color = d3.scale.ordinal()
 	.domain(["negative","somewhat negative","neutral","somewhat positive","positive"])
 	.range(["#d62728","#ff9896","#ffbb78","#98df8a","#2ca02c"]);
 
-var margin = {top: 20, right: 20, bottom: 30, left: 40},
+var margin = {top: 5, right: 20, bottom: 20, left: 40},
     width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    height = 90 - margin.top - margin.bottom;
 
 var x = d3.scale.linear()
     .range([0, width]);
@@ -42,7 +47,7 @@ var xAxis = d3.svg.axis()
 var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left")
-    .ticks(10);
+    .ticks(3);
 
 var area = d3.svg.area()
 		.interpolate("monotone")
@@ -50,66 +55,74 @@ var area = d3.svg.area()
     .y0(function(d) { return y(d.y0); })
     .y1(function(d) { return y(d.y0 + d.y); });
 
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		d3.json("http://presidential-debates.appspot.com/results",function(error,data) {
+				if (error) throw error;
+				console.log(data);
+		})
+		.header("Content-Type","application/x-www-form-urlencoded")
+		  .send("POST","search_query='wall'");
 
 d3.json("modified2_wSentences.json", function(error, data) {
 	if (error) throw error;
 
-	var bush = data.debate_data.filter(function(d) {return d.candidate=="RUBIO"});
-  x.domain([1,d3.max(debates, function(d) { return +d; })]);
-  y.domain([0, 15]);
+	var rollup = d3.nest()
+		.key(function(d){return d.candidate;})
+		.key(function(d){return d.debate;})
+		.rollup(function(d){return d3.sum(d, function(g){return g.count;})})
+		.entries(data.debate_data);
+
+	var ymax = d3.max(rollup, function(d) { return d3.max(d.values, function(g) {return g.values;})});
+
+	candidates.forEach(function (candidate){
+		d3.select("body").append("p")
+			.text(candidate);
+
+		var svg = d3.select("body").append("svg")
+		    .attr("width", width + margin.left + margin.right)
+		    .attr("height", height + margin.top + margin.bottom)
+		  .append("g")
+		    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-	data_hold = nest.entries(bush);
+		var candidate_data = data.debate_data.filter(function(d) {return d.candidate==candidate});
+		candidate_data = nest.entries(candidate_data);
 
-	data_hold.forEach(function (d){
-		debates.forEach(function (f){
-			if (!d.values.some(function (g){
-				return g.debate === f;
-			})){
-				d.values.push({"debate":f,"count":0});
-			}
-		})
-		d.values.sort(function(a,b){return +a.debate - +b.debate;});
+		candidate_data.forEach(function (d){
+			debates.forEach(function (f){
+				if (!d.values.some(function (g){
+					return g.debate === f;
+				})){
+					d.values.push({"debate":f,"count":0});
+				}
+			})
+			d.values.sort(function(a,b){return +a.debate - +b.debate;});
+		});
+
+		candidate_data = stack(candidate_data);
+
+		var candidate_max = d3.max(candidate_data, function(d) { return d3.max(d.values, function(g) {return g.y0 + g.y;})});
+		x.domain([1,d3.max(debates, function(d) { return +d; })]);
+		y.domain([-ymax/2,ymax/2]);
+
+	  svg.append("g")
+	      .attr("class", "x axis")
+	      .attr("transform", "translate(0," + height + ")")
+	      .call(xAxis);
+
+	  svg.append("g")
+	      .attr("class", "y axis")
+	      .call(yAxis)
+
+		svg.selectAll(".layer")
+				.data(candidate_data)
+			.enter().append("path")
+				.attr("d", function(d) {return area(d.values)})
+				.attr("fill", function(d) {return color(d.key)})
+				.attr("transform", "translate(0," + candidate_max/2 * height/ymax + ")")
+				.attr("class", function(d) {return d.key;});
+
 	});
 
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Frequency");
-
-	svg.selectAll(".layer")
-			.data(stack(data_hold))
-		.enter().append("path")
-			.attr("d", function(d) {return area(d.values)})
-			.attr("fill", function(d) {return color(d.key)})
-			.attr("class", function(d) {console.log(d.key);return d.key;});
-/*
-  svg.selectAll(".bar")
-      .data(bush)
-    .enter().append("rect")
-      .attr("class", "bar")
-      .attr("x", function(d) { return x(d.debate); })
-      .attr("width", x.rangeBand())
-      .attr("y", function(d) { return y(d.count); })
-      .attr("height", function(d) { return height - y(d.count); });
-
-*/
 } );
 	</script>
 </body>
-{% endautoescape %}
