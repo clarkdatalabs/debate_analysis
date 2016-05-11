@@ -35,19 +35,17 @@ def function(query):
 
 # create list of dictionaries
     lst = []
-    for result in results:
-        dct = {}
-        dct2 = {}
-        dct["candidate"] = result['person']
-        if dct["candidate"] in rep_speakers:
-            dct["debate"] = 'R' + result['debate_no']
-        else:
-            dct["debate"] = 'D'+ result['debate_no']
-            dct["sentences"] = dct2
-            dct2["text"] = result['sentence'].encode('utf8').decode('ascii','ignore')
-            dct2["category"]= result['category']
-            dct["join"] = result["person"]+result["debate_no"]
-            lst.append(dct)
+	for result in results:
+    	dct = {}
+    	dct2 = {}
+    	dct["candidate"] = result['person']
+    	dct["debate"] = result["debate_no"].lstrip("0")
+    	dct["sentences"] = dct2
+    	dct2["text"] = result['sentence'].encode('utf8').decode('ascii','ignore')
+    	dct2["category"]= result['category']
+    	dct["join"] = result["person"]+result["debate_no"]
+    	lst.append(dct)
+
 
 # create dictionary where 'join' (e.g., FIORINA02) is key
 # each value is a list of sentiment categories for that candidate in that debate
