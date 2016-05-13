@@ -12,6 +12,7 @@ def function(query):
     from main import MainHandler
     from whoosh.index import open_dir
     from whoosh.qparser import QueryParser
+    import dates
 
 # Opening the index inside of the directory back up coming from sentiment_3
     ix = open_dir("index")
@@ -102,6 +103,12 @@ def function(query):
                     if final['candidate'] == i['candidate'] and final['debate'] == i['debate'] and final['sentiment'] == text['category']:
                         final['sentences'].append(text['text'])
             final_lst.append(final)
+
+    for i in final_lst:
+        if i['candidate'] in rep_speakers:
+            i['debate_date'] = dates.rep_dates[int(i['debate'])-1]
+        elif i['candidate'] in dem_speakers:
+            i['debate_date'] = dates.dem_dates[int(i['debate'])-1]
 
     jstr = {}
     jstr['debate_data'] = final_lst
