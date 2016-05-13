@@ -12,6 +12,7 @@ def function(query):
     from main import MainHandler
     from whoosh.index import open_dir
     from whoosh.qparser import QueryParser
+    import dates
 
 # Opening the index inside of the directory back up coming from sentiment_3
     ix = open_dir("index")
@@ -35,16 +36,16 @@ def function(query):
 
 # create list of dictionaries
     lst = []
-	for result in results:
-    	dct = {}
-    	dct2 = {}
-    	dct["candidate"] = result['person']
-    	dct["debate"] = result["debate_no"].lstrip("0")
-    	dct["sentences"] = dct2
-    	dct2["text"] = result['sentence'].encode('utf8').decode('ascii','ignore')
-    	dct2["category"]= result['category']
-    	dct["join"] = result["person"]+result["debate_no"]
-    	lst.append(dct)
+    for result in results:
+        dct = {}
+        dct2 = {}
+        dct["candidate"] = result['person']
+        dct["debate"] = result["debate_no"].lstrip("0")
+        dct["sentences"] = dct2
+        dct2["text"] = result['sentence'].encode('utf8').decode('ascii','ignore')
+        dct2["category"]= result['category']
+        dct["join"] = result["person"]+result["debate_no"]
+        lst.append(dct)
 
 
 # create dictionary where 'join' (e.g., FIORINA02) is key
@@ -102,6 +103,12 @@ def function(query):
                     if final['candidate'] == i['candidate'] and final['debate'] == i['debate'] and final['sentiment'] == text['category']:
                         final['sentences'].append(text['text'])
             final_lst.append(final)
+
+    for i in final_lst:
+        if i['candidate'] in rep_speakers:
+            i['debate_date'] = dates.rep_dates[int(i['debate'])-1]
+        elif i['candidate'] in dem_speakers:
+            i['debate_date'] = dates.dem_dates[int(i['debate'])-1]
 
     jstr = {}
     jstr['debate_data'] = final_lst
