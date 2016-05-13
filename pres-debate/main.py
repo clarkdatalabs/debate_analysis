@@ -91,12 +91,20 @@ class MainHandler(webapp2.RequestHandler):
 
 class ResultsHandler(webapp2.RequestHandler):
 
-
-
     def get(self):
-        search_query = self.request.get('query', DEFAULT_QUERY)
-        # results = Search.results.fetch(10)
-        # I think the line above is how you get the amount of search results
+		query = self.request.get('search_query')
+		search_query = ndb.StringProperty(indexed=True)
+		# results = ndb.JsonProperty('json_object', indexed=True)
+		results = search.function(query)
+
+		template_values = {
+		    'search_query': search_query,
+		    'query': query,
+		    'results': unicode(results),
+		}
+		template = JINJA_ENVIRONMENT.get_template('templates/results.json')
+		self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+		self.response.write(results)
 
 
 
@@ -112,13 +120,24 @@ class ResultsHandler(webapp2.RequestHandler):
             'results': results,
         }
         template = JINJA_ENVIRONMENT.get_template('templates/results.json')
+        self.response.out.write(unicode(results))
+
+class TestHandler(webapp2.RequestHandler):
+    def get(self):
+    	user = "Kristen"
+
+        template_values = {
+            'user': user,
+        }
+
+        query = self.request.get('search_query')
+        search_query = ndb.StringProperty(indexed=True)
+
+        template=JINJA_ENVIRONMENT.get_template('templates/results.html')
         self.response.write(template.render(template_values))
-
-
-
-
 
 app = webapp2.WSGIApplication([
     ('/index', MainHandler),
-    ('/results', ResultsHandler)
+    ('/results', ResultsHandler),
+	('/test', TestHandler)
 ], debug=True)

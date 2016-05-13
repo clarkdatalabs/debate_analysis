@@ -35,8 +35,8 @@ def function(query):
 
 # create list of dictionaries
     lst = []
-	for result in results:
-    	dct = {}
+    for result in results:
+        dct = {}
     	dct2 = {}
     	dct["candidate"] = result['person']
     	dct["debate"] = result["debate_no"].lstrip("0")
@@ -86,7 +86,7 @@ def function(query):
     master = []
     for i in databykey:
         master.append(databykey[i])
-    
+
     final_lst = []
     for i in master:
         for category in i['counts']:

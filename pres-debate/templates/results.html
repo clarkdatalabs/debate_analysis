@@ -13,6 +13,10 @@
 </head>
 
 <body>
+<form>
+Search: <input type="text" value="wall" id="query"><br>
+<input type="button" value="Submit" onclick="updatesearch(this.form.query.value)">
+</form>
 	<script>
 var data_hold = [];
 var debates = ["1","2","3","4","5","6","7","8","9","10","11","12"];
@@ -55,74 +59,144 @@ var area = d3.svg.area()
     .y0(function(d) { return y(d.y0); })
     .y1(function(d) { return y(d.y0 + d.y); });
 
-		d3.json("http://presidential-debates.appspot.com/results",function(error,data) {
-				if (error) throw error;
-				console.log(data);
-		})
-		.header("Content-Type","application/x-www-form-urlencoded")
-		  .send("POST","search_query='wall'");
 
-d3.json("modified2_wSentences.json", function(error, data) {
-	if (error) throw error;
+function initialsearch(search_string){
+	d3.json("results?search_query=" + search_string, function(error, data) {
+		if (error){
+			console.log(error);
+			data = [];
+		}else{
+			data = data.debate_data;
+		}
+		console.log(data);
 
-	var rollup = d3.nest()
-		.key(function(d){return d.candidate;})
-		.key(function(d){return d.debate;})
-		.rollup(function(d){return d3.sum(d, function(g){return g.count;})})
-		.entries(data.debate_data);
+		var rollup = d3.nest()
+			.key(function(d){return d.candidate;})
+			.key(function(d){return d.debate;})
+			.rollup(function(d){return d3.sum(d, function(g){return g.count;})})
+			.entries(data);
 
-	var ymax = d3.max(rollup, function(d) { return d3.max(d.values, function(g) {return g.values;})});
+		var ymax = d3.max(rollup, function(d) { return d3.max(d.values, function(g) {return g.values;})});
 
-	candidates.forEach(function (candidate){
-		d3.select("body").append("p")
-			.text(candidate);
+		candidates.forEach(function (candidate){
+			d3.select("body").append("p")
+				.text(candidate);
 
-		var svg = d3.select("body").append("svg")
-		    .attr("width", width + margin.left + margin.right)
-		    .attr("height", height + margin.top + margin.bottom)
-		  .append("g")
-		    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			var svg = d3.select("body").append("svg")
+			    .attr("width", width + margin.left + margin.right)
+			    .attr("height", height + margin.top + margin.bottom)
+					.attr("id", candidate)
+			  .append("g")
+			    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-		var candidate_data = data.debate_data.filter(function(d) {return d.candidate==candidate});
-		candidate_data = nest.entries(candidate_data);
+			var candidate_data = data.filter(function(d) {return d.candidate==candidate});
+			candidate_data = nest.entries(candidate_data);
 
-		candidate_data.forEach(function (d){
-			debates.forEach(function (f){
-				if (!d.values.some(function (g){
-					return g.debate === f;
-				})){
-					d.values.push({"debate":f,"count":0});
-				}
-			})
-			d.values.sort(function(a,b){return +a.debate - +b.debate;});
+			candidate_data.forEach(function (d){
+				debates.forEach(function (f){
+					if (!d.values.some(function (g){
+						return g.debate === f;
+					})){
+						d.values.push({"debate":f,"count":0});
+					}
+				})
+				d.values.sort(function(a,b){return +a.debate - +b.debate;});
+			});
+
+			candidate_data = stack(candidate_data);
+
+			var candidate_max = d3.max(candidate_data, function(d) { return d3.max(d.values, function(g) {return g.y0 + g.y;})});
+			x.domain([1,d3.max(debates, function(d) { return +d; })]);
+			y.domain([-ymax/2,ymax/2]);
+
+		  svg.append("g")
+		      .attr("class", "x axis")
+		      .attr("transform", "translate(0," + height + ")")
+		      .call(xAxis);
+
+		  svg.append("g")
+		      .attr("class", "y axis")
+		      .call(yAxis)
+
+			svg.selectAll(".layer")
+					.data(candidate_data)
+				.enter().append("path")
+					.attr("d", function(d) {return area(d.values)})
+					.attr("fill", function(d) {return color(d.key)})
+					.attr("transform", "translate(0," + candidate_max/2 * height/ymax + ")")
+					.attr("class", function(d) {return d.key;});
+
 		});
 
-		candidate_data = stack(candidate_data);
+	} );
+}
 
-		var candidate_max = d3.max(candidate_data, function(d) { return d3.max(d.values, function(g) {return g.y0 + g.y;})});
-		x.domain([1,d3.max(debates, function(d) { return +d; })]);
-		y.domain([-ymax/2,ymax/2]);
+function updatesearch(search_string){
+	d3.json("results?search_query=" + search_string, function(error, data) {
+		if (error){
+			console.log(error);
+			data = [];
+		}else{
+			data = data.debate_data;
+		}
+		console.log(data);
 
-	  svg.append("g")
-	      .attr("class", "x axis")
-	      .attr("transform", "translate(0," + height + ")")
-	      .call(xAxis);
+		var rollup = d3.nest()
+			.key(function(d){return d.candidate;})
+			.key(function(d){return d.debate;})
+			.rollup(function(d){return d3.sum(d, function(g){return g.count;})})
+			.entries(data);
 
-	  svg.append("g")
-	      .attr("class", "y axis")
-	      .call(yAxis)
+		var ymax = d3.max(rollup, function(d) { return d3.max(d.values, function(g) {return g.values;})});
 
-		svg.selectAll(".layer")
-				.data(candidate_data)
-			.enter().append("path")
-				.attr("d", function(d) {return area(d.values)})
-				.attr("fill", function(d) {return color(d.key)})
-				.attr("transform", "translate(0," + candidate_max/2 * height/ymax + ")")
-				.attr("class", function(d) {return d.key;});
+		candidates.forEach(function (candidate){
 
-	});
+			var svg = d3.select("#" + candidate);
 
-} );
-	</script>
+
+			var candidate_data = data.filter(function(d) {return d.candidate==candidate});
+			candidate_data = nest.entries(candidate_data);
+
+			candidate_data.forEach(function (d){
+				debates.forEach(function (f){
+					if (!d.values.some(function (g){
+						return g.debate === f;
+					})){
+						d.values.push({"debate":f,"count":0});
+					}
+				})
+				d.values.sort(function(a,b){return +a.debate - +b.debate;});
+			});
+
+			candidate_data = stack(candidate_data);
+
+			var candidate_max = d3.max(candidate_data, function(d) { return d3.max(d.values, function(g) {return g.y0 + g.y;})});
+			x.domain([1,d3.max(debates, function(d) { return +d; })]);
+			y.domain([-ymax/2,ymax/2]);
+
+		  svg.append("g")
+		      .attr("class", "x axis")
+		      .attr("transform", "translate(0," + height + ")")
+		      .call(xAxis);
+
+		  svg.append("g")
+		      .attr("class", "y axis")
+		      .call(yAxis)
+
+			svg.selectAll("path")
+					.data(candidate_data)
+				.enter().append("path")
+					.attr("d", function(d) {return area(d.values)})
+					.attr("fill", function(d) {return color(d.key)})
+					.attr("transform", "translate(0," + candidate_max/2 * height/ymax + ")")
+					.attr("class", function(d) {return d.key;});
+
+		});
+
+	} );
+}
+
+initialsearch("wall");
+</script>
 </body>
