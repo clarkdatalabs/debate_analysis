@@ -20,7 +20,7 @@ Search: <input type="text" value="wall" id="query"><br>
 	<script>
 var data_hold = [];
 var debates = ["1","2","3","4","5","6","7","8","9","10","11","12"];
-var candidates = ['TRUMP','CRUZ','KASICH','RUBIO','CARSON', 'FIORINA', 'PAUL', 'HUCKABEE', 'WALKER','CHRISTIE', 'BUSH', 'CLINTON', 'SANDERS', 'CHAFEE', "O'MALLEY", 'WEBB'];
+var candidates = ['TRUMP','CRUZ','KASICH','RUBIO','CARSON', 'FIORINA', 'PAUL', 'HUCKABEE', 'WALKER','CHRISTIE', 'BUSH', 'CLINTON', 'SANDERS', 'CHAFEE', 'WEBB'];
 var layers;
 var stack = d3.layout.stack().offset("silhouette")
 		.values(function(d) { return d.values; })
@@ -175,22 +175,13 @@ function updatesearch(search_string){
 			x.domain([1,d3.max(debates, function(d) { return +d; })]);
 			y.domain([-ymax/2,ymax/2]);
 
-		  svg.append("g")
-		      .attr("class", "x axis")
-		      .attr("transform", "translate(0," + height + ")")
-		      .call(xAxis);
+			var layers = svg.selectAll(".layer");
 
-		  svg.append("g")
-		      .attr("class", "y axis")
-		      .call(yAxis)
-
-			svg.selectAll("path")
+			layers.selectAll("path")
 					.data(candidate_data)
-				.enter().append("path")
-					.attr("d", function(d) {return area(d.values)})
-					.attr("fill", function(d) {return color(d.key)})
-					.attr("transform", "translate(0," + candidate_max/2 * height/ymax + ")")
-					.attr("class", function(d) {return d.key;});
+					.transition()
+						.duration(2500)
+						.attr("d", function(d) {return area(d.values)});
 
 		});
 
