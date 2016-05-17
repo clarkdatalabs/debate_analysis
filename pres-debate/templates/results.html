@@ -59,6 +59,14 @@ var area = d3.svg.area()
     .y0(function(d) { return y(d.y0); })
     .y1(function(d) { return y(d.y0 + d.y); });
 
+var sortable = {
+	"positive" : 1,
+	"somewhat positive": 2,
+	"neutral": 3,
+	"somewhat negative": 4,
+	"negative": 5
+};
+
 
 function initialsearch(search_string){
 	d3.json("results?search_query=" + search_string, function(error, data) {
@@ -101,7 +109,12 @@ function initialsearch(search_string){
 						d.values.push({"debate":f,"count":0});
 					}
 				})
-				d.values.sort(function(a,b){return +a.debate - +b.debate;});
+				//d.values.sort(function(a,b){return +a.debate - +b.debate;});
+				d.values.sort(function(a,b){if (a.debate == b.debate){
+					return sortable[a.sentiment]- sortable[b.sentiment];
+				} else 
+				{return +a.debate - +b.debate;}
+			});
 			});
 
 			candidate_data = stack(candidate_data);
