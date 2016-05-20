@@ -15,7 +15,7 @@
 <body>
 <form>
 Search: <input type="text" value="wall" id="query"><br>
-<input type="button" value="Submit" onclick="updatesearch(this.form.query.value)">
+<input type="button" value="Submit" onclick="initialsearch(this.form.query.value)">
 </form>
 	<script>
 
@@ -70,6 +70,8 @@ var sortable = {
 
 
 function initialsearch(search_string){
+	d3.selectAll("svg").remove();
+	d3.selectAll("p").remove();
 	d3.json("results?search_query=" + search_string, function(error, data) {
 		if (error){
 			console.log(error);
