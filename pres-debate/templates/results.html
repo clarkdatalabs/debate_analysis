@@ -19,7 +19,6 @@ Search: <input type="text" value="wall" id="query"><br>
 </form>
 	<script>
 
-var debates = ["1","2","3","4","5","6","7","8","9","10","11","12"];
 
 var candidates = ['TRUMP','CRUZ','KASICH','RUBIO','CARSON', 'FIORINA', 'PAUL', 'HUCKABEE', 'WALKER','CHRISTIE', 'BUSH', 'CLINTON', 'SANDERS', 'CHAFEE', 'WEBB'];
 
@@ -41,7 +40,7 @@ var margin = {top: 5, right: 20, bottom: 20, left: 40},
     width = 960 - margin.left - margin.right,
     height = 90 - margin.top - margin.bottom;
 
-var x = d3.scale.linear()
+var x = d3.time.scale()
      .range([0, width]);
 
 
@@ -50,8 +49,8 @@ var y = d3.scale.linear()
 
 var xAxis = d3.svg.axis()
     .scale(x)
-    .orient("bottom").ticks(20)
-    .tickFormat(d3.time.format("%m/%d/%Y"));
+    .orient("bottom").ticks(10)
+    .tickFormat(d3.time.format("%m/%y"));
 
 
 var yAxis = d3.svg.axis()
@@ -89,16 +88,14 @@ function initialsearch(search_string){
 
 	data.forEach(function(d) {
   		d.date = parseDate(d.debate_date);
-  		console.log(d.debate_date);
-  		console.log(d.date);
 	});
 
-	//console.log(data);
+
 			x.domain([d3.min(data,function(d) {return d.date;}), d3.max(data, function(d) { return d.date; })]);
 
 		var rollup = d3.nest()
 			.key(function(d){return d.candidate;})
-			.key(function(d){return d.date;})
+			.key(function(d){return d.debate;})
 			.rollup(function(d){return d3.sum(d, function(g){return g.count;})})
 			.entries(data);
 
@@ -118,23 +115,16 @@ function initialsearch(search_string){
 
 
 			var candidate_data = data.filter(function(d) {return d.candidate==candidate});
+			data_hold = data;
+			console.log(candidate_data);
 			candidate_data = nest.entries(candidate_data);
-			// console.log(candidate_data)
+			console.log(candidate_data);
 			candidate_data.forEach(function (d){
-				debates.forEach(function (f){
-					if (!d.values.some(function (g){
-						return g.debate === f;
-					})){
-						d.values.push({"debate":f,"count":0});
-					}
-				})
 				//d.values.sort(function(a,b){return +a.debate - +b.debate;});
 				d.values.sort(function(a,b){return +a.debate - +b.debate;});
 			});
 			candidate_data.sort(function(a,b){return sortable[b.key] - sortable[a.key];});
 			candidate_data = stack(candidate_data);
-
-			//console.log(candidate_data);
 
 			var candidate_max = d3.max(candidate_data, function(d) { return d3.max(d.values, function(g) {return g.y0 + g.y;})});
 			y.domain([-ymax/2,ymax/2]);
@@ -157,50 +147,9 @@ function initialsearch(search_string){
 
 					.attr("class", function(d) {return d.key;});
 
-		svg.selectAll(".layer")
-    		.attr("opacity", 1)
-    		.on("mouseover", function(d, i) {
-      		svg.selectAll(".layer").transition()
-      		.duration(250)
-      		.attr("opacity", function(d, j) {
-        	return j != i ? 0.6 : 1;
-    	})})
-
-    		.on("mousemove", function(d, i) {
-      			mousex = d3.mouse(this);
-      			mousex = mousex[0];
-      			var invertedx = x.invert(mousex);
-      			invertedx = invertedx.getMonth() + invertedx.getDate();
-      			var selected = (d.values);
-      			for (var k = 0; k < selected.length; k++) {
-        		datearray[k] = selected[k].date
-        		datearray[k] = datearray[k].getMonth() + datearray[k].getDate();
-      			}
-
-      			mousedate = datearray.indexOf(invertedx);
-      			pro = d.values[mousedate].value;
-
-      		d3.select(this)
-      		.classed("hover", true)
-      		.attr("stroke", strokecolor)
-      		.attr("stroke-width", "0.5px"),
-      		tooltip.html( "<p>" + d.key + "<br>" + pro + "</p>" ).style("visibility", "visible");
-    		})
-
-    		.on("mouseout", function(d, i) {
-     		svg.selectAll(".layer")
-      		.transition()
-      		.duration(250)
-      		.attr("opacity", "1");
-      		d3.select(this)
-      		.classed("hover", false)
-      		.attr("stroke-width", "0px"), tooltip.html( "<p>" + d.key + "<br>" + pro + "</p>" ).style("visibility", "hidden");
-  			})
-
-
 		});
 
-	} );
+	});
 }
 
 function updatesearch(search_string){
