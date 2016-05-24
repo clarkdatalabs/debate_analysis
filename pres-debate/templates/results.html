@@ -70,6 +70,8 @@ function initialsearch(search_string){
 		}
 		console.log(data);
 
+		data_hold = data;
+
 		var rollup = d3.nest()
 			.key(function(d){return d.candidate;})
 			.key(function(d){return d.debate;})
@@ -125,8 +127,7 @@ function initialsearch(search_string){
 					.attr("d", function(d) {return area(d.values)})
 					.attr("fill", function(d) {return color(d.key)})
 					.attr("transform", "translate(0," + candidate_max/2 * height/ymax + ")")
-					.attr("class", function(d) {return d.key;});
-
+					.attr("class", function(d) {return d.key + " layer";})
 		});
 
 	} );
@@ -175,17 +176,18 @@ function updatesearch(search_string){
 			x.domain([1,d3.max(debates, function(d) { return +d; })]);
 			y.domain([-ymax/2,ymax/2]);
 
-			var layers = svg.selectAll(".layer");
+			var lay = svg.selectAll(".layer")
+					.data(candidate_data);
 
-			layers.selectAll("path")
-					.data(candidate_data)
-					.transition()
-						.duration(2500)
-						.attr("d", function(d) {return area(d.values)});
+			lay.attr("fill", function(d) {return color(d.key)})
+					.attr("transform", "translate(0," + candidate_max/2 * height/ymax + ")")
+					.attr("class", function(d) {return d.key + " layer";})
+				.transition().duration(2500)
+					.attr("d", function(d) {console.log(area(d.values)); return area(d.values)});
 
-		});
-
-	} );
+				lay.exit().remove();
+				});
+			});
 }
 
 initialsearch("wall");
