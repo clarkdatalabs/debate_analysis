@@ -88,6 +88,15 @@ def function(query):
     for i in databykey:
         master.append(databykey[i])
 
+    cat = ["positive", "somewhat positive", "neutral", "somewhat negative", "negative"]
+    for i in master:
+        for category in cat:
+            if category not in i["counts"]:
+                i["counts"].update({category: 0})
+                i["sentences"].append({"category": category, "text": []})
+            else:
+                continue
+
     final_lst = []
     for i in master:
         for category in i['counts']:
@@ -103,6 +112,10 @@ def function(query):
                     if final['candidate'] == i['candidate'] and final['debate'] == i['debate'] and final['sentiment'] == text['category']:
                         final['sentences'].append(text['text'])
             final_lst.append(final)
+
+    for i in final_lst:
+        if i['sentences'] == [[]]:
+            i['sentences'] = []
 
     for i in final_lst:
         if i['candidate'] in rep_speakers:
