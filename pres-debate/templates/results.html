@@ -192,13 +192,13 @@ function initialsearch(search_string){
 			    })})
 
 			    .on("mousemove", function(d) {
-					mousex = d3.mouse(this);
-			    	mousex = mousex[0]
-			    	var mouseDate = x.invert(mousex)
-			    	console.log(mouseDate)
+			    	mousex = d3.mouse(this);
+					mousex = mousex[0]
+					var mouseDate = x.invert(mousex)
+					console.log(mouseDate)
 					var i = bisectDate(d.values, mouseDate); // returns index to upcoming object
-			    	console.log(i)
-			    	console.log(d.values)
+					console.log(i)
+					console.log(d.values)
 					var d0 = d.values[i - 1];
 					var d1 = d.values[i];
 					console.log(d0)
