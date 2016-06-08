@@ -193,29 +193,29 @@ function initialsearch(search_string){
 
 			    .on("mousemove", function(d) {
 			    	mousex = d3.mouse(this);
-					mousex = mousex[0]
-					var mouseDate = x.invert(mousex)
-					console.log(mouseDate)
-					var i = bisectDate(d.values, mouseDate); // returns index to upcoming object
-					console.log(i)
-					console.log(d.values)
-					var d0 = d.values[i - 1];
-					var d1 = d.values[i];
-					console.log(d0)
-					console.log(d1)
-                    // work out which date value is closest to the mouse
-					if(typeof(d1) === "undefined") {
-							var d = d0;
-						}else{
-							var d = mouseDate - d0.date > d1.date - mouseDate ? d1 : d0;
-					}
+			    	mousex = mousex[0];
+			    	var mouseDate = x.invert(mousex);
+			    	console.log(mouseDate);
+			    	var i = bisectDate(d.values, mouseDate); // returns index to upcoming object
+			    	console.log(i);
+			    	console.log(d.values);
+			    	var d0 = d.values[i - 1];
+			    	var d1 = d.values[i];
+			    	console.log(d0);
+			    	console.log(d1);
+			    	// work out which date value is closest to the mouse
+			    	if(typeof(d1) === "undefined") {
+			    			var d = d0;
+			    		}else{
+			    			var d = mouseDate - d0.date > d1.date - mouseDate ? d1 : d0;
+			    		}
 
-					pro = d.sentences;
-					debateDate = d.debate_date;
-					sentiment = d.sentiment;
-					candidate = d.candidate;
+			    	pro = d.sentences;
+			    	debateDate = d.debate_date;
+			    	sentiment = d.sentiment;
+			    	candidate = d.candidate;
 
-					d3.select(this)
+			    	d3.select(this)
 				      .classed("hover", true)
 				      .attr("stroke", strokecolor)
 				      .attr("stroke-width", "0.5px"), 
