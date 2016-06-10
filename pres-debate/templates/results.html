@@ -14,7 +14,7 @@
 
 <body>
 <form action = '#'>
-Search: <input type="text" value="wall" id="query" onkeypress="handle(event)">
+Search: <input type="text" value="immigration" id="query" onkeypress="handle(event)">
 <input type="button" value="Submit" onclick="initialsearch(this.form.query.value)">
 </form>
 <p id="expo"></p>
@@ -118,7 +118,7 @@ function initialsearch(search_string){
 			data = data.debate_data;
 		}
 
-
+	console.log(data)
 	data.forEach(function(d) {
   		d.date = parseDate(d.debate_date);
 	});
@@ -228,8 +228,8 @@ function initialsearch(search_string){
 				      .duration(250)
 				      .attr("opacity", "1");
 				      d3.select(this)
-				      .classed("hover", false)
-				      .attr("stroke-width", "0px"), tooltip.html( "<p>" + "<b>Sentiment: </b>" + d.key + "<br>" + "<b>Candidate: </b>" + candidate + "<br>" + "<b>Date: </b>"+ debateDate + "<br>" + "<b>Statement(s): </b>" + split(pro) + "</p>" ).style("visibility", "visible");
+				      .classed("hover", false);
+				      // .attr("stroke-width", "0px"), tooltip.html( "<p>" + "<b>Sentiment: </b>" + d.key + "<br>" + "<b>Candidate: </b>" + candidate + "<br>" + "<b>Date: </b>"+ debateDate + "<br>" + "<b>Statement(s): </b>" + split(pro) + "</p>" ).style("visibility", "visible");
 				  })
 		});
 
