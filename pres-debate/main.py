@@ -137,7 +137,7 @@ class TestHandler(webapp2.RequestHandler):
         self.response.write(template.render(template_values))
 
 app = webapp2.WSGIApplication([
+    ('/', TestHandler),
     ('/index', MainHandler),
-    ('/results', ResultsHandler),
-	('/test', TestHandler)
+    ('/results', ResultsHandler)
 ], debug=True)
