@@ -24,10 +24,6 @@ def function(query):
 	parser = QueryParser("sentence", schema=ix.schema)
 
 	q = parser.parse(phrase_to_search)
-# nq = str(q)
-# print nq
-# token1 = str((nq)).split(':')
-# print token1
 
 	results = searcher.search(q, limit=None)
 
@@ -157,6 +153,10 @@ def function(query):
 			i['debate_date'] = dates.rep_dates[int(i['debate'])-1]
 		elif i['candidate'] in dem_speakers:
 			i['debate_date'] = dates.dem_dates[int(i['debate'])-1]
+
+	for i in final_lst:
+		if i['candidate'] == "O'MALLEY":
+			i['candidate'] = "OMALLEY"
 
 	jstr = {}
 	jstr['debate_data'] = final_lst

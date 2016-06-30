@@ -1,0 +1,39 @@
+[INFO  - 2016-06-28T17:21:25.325Z] GhostDriver - Main - running on port 51804
+[INFO  - 2016-06-28T17:21:25.710Z] Session [be160480-3d54-11e6-ab78-df5a41ebdb4a] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2016-06-28T17:21:25.710Z] Session [be160480-3d54-11e6-ab78-df5a41ebdb4a] - page.customHeaders:  - {}
+[INFO  - 2016-06-28T17:21:25.710Z] Session [be160480-3d54-11e6-ab78-df5a41ebdb4a] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"mac-10.10 (Yosemite)-64bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2016-06-28T17:21:25.710Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: be160480-3d54-11e6-ab78-df5a41ebdb4a
+[ERROR - 2016-06-28T17:25:31.050Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1467134730981
+
+  phantomjs://platform/console++.js:263 in error
+[INFO  - 2016-06-28T17:26:25.324Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[ERROR - 2016-06-28T17:26:39.491Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1467134799444
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2016-06-28T17:27:17.838Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1467134837816
+
+  phantomjs://platform/console++.js:263 in error
+[INFO  - 2016-06-28T17:31:25.324Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-06-28T17:36:25.324Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-06-28T17:41:25.324Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-06-28T17:46:25.324Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[ERROR - 2016-06-28T17:47:44.744Z] Session [be160480-3d54-11e6-ab78-df5a41ebdb4a] - page.onError - msg: XHR Error: undefined undefined
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2016-06-28T17:47:44.745Z] Session [be160480-3d54-11e6-ab78-df5a41ebdb4a] - page.onError - stack:
+  _reportXhrError (http://d1iq7pbacwn5rb.cloudfront.net/composer-ui/assets/scripts/composer-ui.min.js:7)
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2016-06-28T17:47:44.745Z] Session [be160480-3d54-11e6-ab78-df5a41ebdb4a] - page.onError - msg: XHR Error: undefined undefined
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2016-06-28T17:47:44.745Z] Session [be160480-3d54-11e6-ab78-df5a41ebdb4a] - page.onError - stack:
+  _reportXhrError (http://d1iq7pbacwn5rb.cloudfront.net/composer-ui/assets/scripts/composer-ui.min.js:7)
+
+  phantomjs://platform/console++.js:263 in error
+[INFO  - 2016-06-28T17:51:26.172Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-06-28T17:56:26.172Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-06-28T18:01:26.172Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-06-28T18:06:29.213Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-06-28T18:11:29.213Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-06-28T18:11:29.215Z] SessionManagerReqHand - _cleanupWindowlessSessions - Deleted Session 'be160480-3d54-11e6-ab78-df5a41ebdb4a', because windowless
