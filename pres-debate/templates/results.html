@@ -23,7 +23,7 @@
 <h1>2016 Presidential Debates Sentiment Analyzer</h1>
 
 <form action = '#'>
-Search: <input type="text" value=" " id="query" onkeypress="handle(event)">
+Search: <input type="text" value="taxes" id="query" onkeypress="handle(event)">
 <input type="button" value="Submit" onclick="initialsearch(this.form.query.value)">
 </form>
 
@@ -66,7 +66,7 @@ function objectConvert(a)
 }
 
 var datearray = [];
-var candidates = ["TRUMP","CRUZ", "KASICH", "RUBIO", "CLINTON", "SANDERS","CARSON", "FIORINA", "PAUL", "HUCKABEE", "WALKER","CHRISTIE", "BUSH", "CHAFEE", "WEBB", "OMALLEY"];
+var candidates = ["SANDERS", "CLINTON", "WEBB", "CHAFEE" , "OMALLEY", "TRUMP", "CRUZ", "KASICH", "RUBIO", "CARSON", "FIORINA", "BUSH", "PAUL", "HUCKABEE","WALKER","CHRISTIE"];
 
 var parseDate = d3.time.format("%m/%d/%Y").parse,
 	bisectDate = d3.bisector(function(d) { return d.date; }).right;
@@ -135,10 +135,6 @@ var sortable = {
 	"negative": 5
 };
 
-// function chevronSetup(){
-// 	alert('welcome!');
-// }
-
 
 function initialsearch(search_string){
 	d3.selectAll("svg").remove();
@@ -170,7 +166,7 @@ function initialsearch(search_string){
 		//console.log(rollup);
 		candidates.forEach(function (candidate){
 			d3.select(".inner-container").append("p")
-				.attr("class", "names")
+				.attr("class", function() {if (candidate in objectConvert(["TRUMP", "CRUZ", "RUBIO", "CLINTON", "SANDERS"]) ){return "initial-chart-uncollapsed"} else {return "initial-chart-collapsed"}})
 				.html("<div class = 'collapsibles' data-toggle='collapse' data-target='#" + candidate + "'>" + candidate +
 					"<i class = 'fa fa-chevron-left'></i>" + "</div>");
 
@@ -182,7 +178,6 @@ function initialsearch(search_string){
 			  .append("g")
 			    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
 			var candidate_data = data.filter(function(d) {return d.candidate==candidate});
 			data_hold = data;
 			//console.log(candidate_data);
@@ -191,7 +186,7 @@ function initialsearch(search_string){
 			candidate_data.forEach(function (d){
 				if (error){
 					console.log(error);}
-				//d.values.sort(function(a,b){return +a.debate - +b.debate;});
+
 				d.values.sort(function(a,b){return +a.debate - +b.debate;});
 			});
 			candidate_data.sort(function(a,b){return sortable[b.key] - sortable[a.key];});
@@ -379,7 +374,6 @@ function initialsearch(search_string){
 // 			});
 // }
 
-initialsearch(' ')
-window.onload = chevronSetup
+initialsearch('taxes')
 </script>
 </body>

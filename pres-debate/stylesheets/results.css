@@ -27,7 +27,6 @@ form{
 	font-family: sans-serif;
 	height: 30px;
 }
-
 .intro-text-box{
 	margin-bottom: 5px;
 }
@@ -55,15 +54,20 @@ svg{
 	margin-bottom: 5px;
 }
 
-.fa-chevron-left{
+.fa-chevron-left {
 	float: right;
 	color: #999999;
 }
 
-
 .collapsibles[aria-expanded=false] > i {
 	float: right;
 	color: #999999;
+
+	-webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+	transform: rotate(0deg);
 
 }
 
@@ -77,10 +81,18 @@ svg{
     -o-transform: rotate(-90deg);
     transform: rotate(-90deg);
 }
-
-/*.fa-chevron-down:before {
-  content: "\f078";
+.initial-chart-collapsed > div > i {
+	float: right;
+	color: #999999;
 }
-.fa-chevron-left:before {
-  content: "\f053";
-}*/
+
+.initial-chart-uncollapsed > div > i {
+	float: right;
+	color: #999999;
+
+	-webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+}
