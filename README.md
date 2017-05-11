@@ -1,5 +1,6 @@
 [![Photo of web app comparing 'taxes' mentions between Clinton and Sanders](images/debatesentiment.png)](http://presidential-debates.appspot.com/)
-[View the final web application](http://presidential-debates.appspot.com/)
+
+**[View the final web application](http://presidential-debates.appspot.com/)**
 
 Opinions tend to reflect feelings as well as beliefs. Sentiment analysis, also known as opinion mining, is a technique used today for generating data on trends in people’s attitudes and feelings on anything from products and services to current events. This data is created by calculating sentiment scores using what people have said or written. Despite the efforts of computer scientists, semanticists and statisticians to figure out ways to program computers to identify the feelings expressed in words, the technique of sentiment analysis is still at best only reliable as a starting point for closer readings.
 
